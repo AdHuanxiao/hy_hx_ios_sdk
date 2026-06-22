@@ -1,0 +1,6 @@
+framework module HYHXHuanxiaoAds {
+  umbrella header "HYHXHuanxiaoAds.h"
+  export *
+
+  module * { export * }
+}
