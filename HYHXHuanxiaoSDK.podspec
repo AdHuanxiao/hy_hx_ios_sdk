@@ -1,0 +1,27 @@
+Pod::Spec.new do |spec|
+  spec.name             = 'HYHXHuanxiaoSDK'
+  spec.version          = '1.5.8'
+  spec.summary          = 'HYHXHuanxiaoSDK for iOS'
+  spec.description      = <<-DESC
+                          HuanxiaoSDK
+                          DESC
+  spec.homepage         = 'https://github.com/AdHuanxiao/hy_hx_ios_sdk'
+  spec.license          = { :type => 'MIT', :file => 'LICENSE' }
+  spec.author           = { 'HuanxiaoSDK' => 'eddie@adhuanxiao.com' }
+  spec.source           = { :git => 'https://github.com/AdHuanxiao/hy_hx_ios_sdk.git', :tag => spec.version.to_s }
+  
+  spec.ios.deployment_target = '13.0'
+  spec.static_framework = true
+  
+  spec.resources = [
+    'HYHXHuanxiaoSDK/Resources/HXAdsImages.bundle'
+  ]
+  # 默认只安装基础SDK
+  spec.default_subspecs = 'Core'
+  
+
+  spec.subspec 'Core' do |ss|
+    ss.ios.deployment_target = '13.0'
+    ss.vendored_frameworks = 'HYHXHuanxiaoSDK/HYHXHuanxiaoAds.xcframework'
+  end
+end
