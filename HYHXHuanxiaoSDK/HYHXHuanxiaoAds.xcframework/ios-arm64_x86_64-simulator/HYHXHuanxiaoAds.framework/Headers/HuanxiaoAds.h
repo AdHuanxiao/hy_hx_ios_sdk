@@ -29,29 +29,28 @@ FOUNDATION_EXPORT const unsigned char HuanxiaoAdsVersionString[];
 
 #pragma mark - 广告模块
 
+#import <HYHXHuanxiaoAds/HXAdMaterialInfo.h>
+
 // 竞价结果通知协议
 #import <HYHXHuanxiaoAds/HXBidNotifiable.h>
+
+#import <HYHXHuanxiaoAds/HXFullscreenAdRenderData.h>
 
 // 开屏广告
 #import <HYHXHuanxiaoAds/HXSplashAdDelegate.h>
 #import <HYHXHuanxiaoAds/HXSplashAd.h>
-#import <HYHXHuanxiaoAds/HXSplashAd+Internal.h>
 
 // 插屏广告
 #import <HYHXHuanxiaoAds/HXInterstitialAdDelegate.h>
 #import <HYHXHuanxiaoAds/HXInterstitialAd.h>
-#import <HYHXHuanxiaoAds/HXInterstitialAd+Internal.h>
 
 // 信息流广告
 #import <HYHXHuanxiaoAds/HXNativeAdDelegate.h>
 #import <HYHXHuanxiaoAds/HXNativeAd.h>
-#import <HYHXHuanxiaoAds/HXNativeAd+Internal.h>
 #import <HYHXHuanxiaoAds/HXNativeAdRenderData.h>
 #import <HYHXHuanxiaoAds/HXInteractionContainerView.h>
 #import <HYHXHuanxiaoAds/HXMediaView.h>
 // 激励视频广告
 #import <HYHXHuanxiaoAds/HXRewardVideoAdDelegate.h>
 #import <HYHXHuanxiaoAds/HXRewardVideoAd.h>
-#import <HYHXHuanxiaoAds/HXRewardVideoAd+Internal.h>
-#import <HYHXHuanxiaoAds/HXResourceLoader.h>
 

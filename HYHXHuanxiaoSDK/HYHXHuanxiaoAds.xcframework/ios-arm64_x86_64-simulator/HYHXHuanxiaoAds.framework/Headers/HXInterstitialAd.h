@@ -9,12 +9,27 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import <HYHXHuanxiaoAds/HXAdMaterialInfo.h>
 #import <HYHXHuanxiaoAds/HXInterstitialAdDelegate.h>
 #import <HYHXHuanxiaoAds/HXBidNotifiable.h>
+#import <HYHXHuanxiaoAds/HXFullscreenAdRenderData.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface HXInterstitialAd : NSObject <HXBidNotifiable>
+
+/// 加载成功后可读取的素材快照；加载前及本轮加载失败时为 nil。
+/// 被拒绝的重复加载、广告关闭或过期不会清除已成功加载的快照。
+@property (atomic, strong, readonly, nullable) HXAdMaterialInfo *materialInfo;
+
+/// 服务端决定的渲染方式，仅加载成功后有效；媒体不能设置。
+@property (nonatomic, assign, readonly) HXFullscreenAdRenderMode renderMode;
+
+/// 自渲染素材，仅 Custom 模式加载成功后有效。
+/// 在主线程创建内容视图并 bindWithContainer，再调用现有 show 方法。
+/// SDK 管理曝光、交互、视频和关闭；绑定本身不开始展示。
+@property (nonatomic, strong, readonly, nullable) HXFullscreenAdRenderData *renderData;
+
 
 #pragma mark - 属性
 
@@ -74,6 +89,10 @@ NS_ASSUME_NONNULL_BEGIN
  * @default NO（默认有声播放）
  */
 @property (nonatomic, assign) BOOL videoMuted;
+
+/// 落地页弹出控制器，一般传当前 VC。落地页/App Store/合规页面从该控制器弹出；不设置或失效时自动探测顶层。
+/// 用 showFromViewController: 展示时未设置则默认用展示控制器。弱引用。
+@property (nonatomic, weak, nullable) UIViewController *landingPageRootViewController;
 
 #pragma mark - 广告操作
 

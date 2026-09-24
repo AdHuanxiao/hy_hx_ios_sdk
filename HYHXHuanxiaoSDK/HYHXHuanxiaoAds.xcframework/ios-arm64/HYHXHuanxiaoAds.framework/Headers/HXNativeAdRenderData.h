@@ -12,8 +12,40 @@
 
 @class HXMediaView;
 @class HXInteractionContainerView;
+@protocol HXNativeAdCustomVideoDelegate;
 
 NS_ASSUME_NONNULL_BEGIN
+
+/// 自渲染广告的应用信息。下载类广告应使用这些字段展示应用合规信息。
+@interface HXNativeAdAppInfo : NSObject
+
+/// 应用名称
+@property (nonatomic, copy, readonly, nullable) NSString *name;
+/// 应用图标地址。
+@property (nonatomic, copy, readonly, nullable) NSString *iconUrl;
+/// 应用大小，单位 KB；
+@property (nonatomic, assign, readonly) NSUInteger sizeInKilobytes;
+/// 应用版本号
+@property (nonatomic, copy, readonly, nullable) NSString *versionName;
+/// 应用包名
+@property (nonatomic, copy, readonly, nullable) NSString *packageName;
+/// 应用开发者
+@property (nonatomic, copy, readonly, nullable) NSString *developer;
+/// 应用权限说明页面地址
+@property (nonatomic, copy, readonly, nullable) NSString *permissionUrl;
+/// 应用隐私协议页面地址
+@property (nonatomic, copy, readonly, nullable) NSString *privacyUrl;
+/// 应用介绍页面地址
+@property (nonatomic, copy, readonly, nullable) NSString *descriptionUrl;
+/// 应用备案信息页面地址
+@property (nonatomic, copy, readonly, nullable) NSString *icpUrl;
+/// 应用适用年龄
+@property (nonatomic, copy, readonly, nullable) NSString *ageLimit;
+
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)new NS_UNAVAILABLE;
+
+@end
 
 @interface HXNativeAdRenderData : NSObject
 
@@ -34,13 +66,14 @@ NS_ASSUME_NONNULL_BEGIN
 //  广告素材高
 @property (nonatomic, assign, readonly) NSInteger height;
 //  由于广告法规定，必须添加广告标识（建议：广告标识放置在广告的左下角，logo放置在广告的右下角）
-//  广告标识图片
+/// 完整广告标识图片（已经包含所需文字）。优先显示；不要再叠加 adLabel。
+/// 服务端隐藏 Logo 或图片缺失时返回仅含“广告”的图片。
 @property (nonatomic, strong, readonly, nullable) UIImage *adLabelImage;
-//  广告标识文字
+/// adLabelImage 无法生成时的文字兜底，与 adLabelImage 二选一。
 @property (nonatomic, copy, readonly) NSString *adLabel;
-//  logo图片
+/// 按构建配置返回的原始角标图；和 logoLabel 配合显示。服务端隐藏 Logo 时为 nil。
 @property (nonatomic, strong, readonly, nullable) UIImage *logoImage;
-//  logo文字
+/// 完整图片模式成功时为空字符串；纯 Logo 模式或没有图片时为“广告”。
 @property (nonatomic, copy, readonly, nullable) NSString *logoLabel;
 //  广告图标URL
 @property (nonatomic, copy, readonly, nullable) NSString *iconUrl;
@@ -48,6 +81,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, readonly, nullable) UIImage *appIcon;
 //  应用图标URL
 @property (nonatomic, copy, readonly, nullable) NSString *appIconUrl;
+/// 应用信息。下载类广告应按监管要求展示相应信息。
+@property (nonatomic, strong, readonly, nullable) HXNativeAdAppInfo *appInfo;
 
 /**
  * 交互容器视图（摇一摇/扭一扭/滑动），媒体可在容器内 addSubview 添加自定义内容。
@@ -62,8 +97,22 @@ NS_ASSUME_NONNULL_BEGIN
 
 //  是否是视频
 @property (nonatomic, assign, readonly) BOOL isVideoAd;
-//  如果 isVideoAd=YES，会提供视频播放器视图
+/// 是否是下载类广告。
+@property (nonatomic, assign, readonly) BOOL isDownloadAd;
+//  视频播放视图，isVideoAd=YES 时有值。
+//  videoRenderMode 设为 Custom 时为 nil，请用下方 videoUrl 等字段自行播放
 @property (nonatomic, strong, readonly, nullable) HXMediaView *mediaView;
+
+#pragma mark - 视频素材（isVideoAd=YES 时有值，自定义视频模式使用）
+
+//  视频播放地址
+@property (nonatomic, copy, readonly, nullable) NSString *videoUrl;
+//  视频封面图地址
+@property (nonatomic, copy, readonly, nullable) NSString *videoCoverUrl;
+//  视频时长（秒）
+@property (nonatomic, assign, readonly) NSTimeInterval videoDuration;
+//  视频素材宽高（像素）
+@property (nonatomic, assign, readonly) CGSize videoSize;
 
 #pragma mark - 行为激励信息（actReward 开启时有值）
 
@@ -75,6 +124,14 @@ NS_ASSUME_NONNULL_BEGIN
 /// 绑定展示视图和广告点击 View（该视图点击可以跳转到落地页）。
 /// 如果 interactionContainerView 已添加到视图层级中，SDK 会自动启动交互监测和提示动画。
 - (void)bindWithContainer:(UIView *)containerView clickableViews:(NSArray *)clickableViews;
+
+/// 绑定展示视图和可点击区域。videoRenderMode = Custom 且为视频广告时使用：
+/// customVideoView 传你的播放器视图（弱引用），videoDelegate 传播放控制实现（弱引用）。
+/// 需要点击视频区域跳转时，把视频视图一并放进 clickableViews。
+- (void)bindWithContainer:(UIView *)containerView
+           clickableViews:(NSArray *)clickableViews
+          customVideoView:(nullable UIView *)customVideoView
+            videoDelegate:(nullable id<HXNativeAdCustomVideoDelegate>)videoDelegate;
 
 /// 添加关闭视图（该视图点击，可以关闭广告）
 - (void)addCloseTarget:(UIView *)targetView;
